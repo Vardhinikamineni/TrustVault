@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TrustVault - Share Document</title>
+</head>
+<body>
+
+    <h1>TrustVault</h1>
+    <h2>Share Document</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <h3>Share a Document</h3>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Select Document:</label>
+        <select name="document_id" required>
+            <option value="">-- Select Document --</option>
+            {% for document in documents %}
+                <option value="{{ document.id }}">
+                    {{ document.title }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+
+        <label>Viewer Username:</label>
+        <select name="username" required>
+            <option value="">-- Select Viewer --</option>
+            {% for viewer in viewers %}
+                <option value="{{ viewer.username }}">
+                    {{ viewer.username }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+
+        <label>Permission:</label>
+        <select name="permission" required>
+            <option value="">-- Select Permission --</option>
+            <option value="read">Read</option>
+            <option value="edit">Edit</option>
+        </select>
+
+        <br><br>
+
+        <button type="submit">Share Document</button>
+    </form>
+
+    <hr>
+
+    <h3>Existing Permissions</h3>
+
+    {% for item in permissions %}
+
+        <p>Document: {{ item.document.title }}</p>
+        <p>Viewer: {{ item.user.username }}</p>
+        <p>Permission: {{ item.get_permission_display }}</p>
+
+        <form method="POST"
+              action="{% url 'revoke_permission' item.id %}">
+            {% csrf_token %}
+            <button type="submit">Revoke Access</button>
+        </form>
+
+        <hr>
+
+    {% empty %}
+        <p>No permissions granted yet.</p>
+    {% endfor %}
+
+    <br>
+
+    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+
+</body>
+</html>

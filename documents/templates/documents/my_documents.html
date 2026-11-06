@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TrustVault - My Documents</title>
+</head>
+<body>
+
+    <h1>TrustVault</h1>
+    <h2>My Documents</h2>
+
+    <!-- SEARCH AND FILTER DOCUMENTS -->
+    <form method="GET">
+
+        <label>Search by Title:</label><br>
+        <input
+            type="text"
+            name="q"
+            placeholder="Search documents by title"
+            value="{{ query }}"
+        >
+
+        <br><br>
+
+        <label>Filter by Category:</label><br>
+        <select name="category">
+            <option value="">All Categories</option>
+            <option value="general">General</option>
+            <option value="education">Education</option>
+            <option value="finance">Finance</option>
+            <option value="legal">Legal</option>
+            <option value="personal">Personal</option>
+            <option value="business">Business</option>
+        </select>
+
+        <br><br>
+
+        <label>Filter by Upload Date:</label><br>
+        <input type="date" name="date">
+
+        <br><br>
+
+        <button type="submit">Search / Filter</button>
+        <a href="{% url 'my_documents' %}">Clear Filters</a>
+
+    </form>
+
+    <hr>
+
+    <!-- DOCUMENT LIST -->
+    {% if documents %}
+
+        {% for document in documents %}
+
+            <h3>{{ document.title }}</h3>
+
+            <p>Category: {{ document.get_category_display }}</p>
+
+            <p>Uploaded: {{ document.uploaded_at }}</p>
+
+            <!-- DOWNLOAD -->
+            <a href="{% url 'download_document' document.id %}">
+                Download Document
+            </a>
+
+            <br><br>
+
+            <!-- EDIT -->
+            <a href="{% url 'edit_document' document.id %}">
+                Edit Document
+            </a>
+
+            <br><br>
+
+            <!-- DELETE -->
+            <form
+                method="POST"
+                action="{% url 'delete_document' document.id %}"
+            >
+                {% csrf_token %}
+                <button type="submit">Delete Document</button>
+            </form>
+
+            <hr>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>No documents found.</p>
+
+    {% endif %}
+
+    <br>
+
+    <a href="{% url 'dashboard' %}">
+        Back to Dashboard
+    </a>
+
+</body>
+</html>

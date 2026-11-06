@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shared Documents - TrustVault</title>
+</head>
+<body>
+
+    <h1>TrustVault</h1>
+    <h2>Documents Shared With Me</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form method="GET">
+
+        <label>Search by Document Title:</label><br>
+        <input type="text" name="q" value="{{ query }}">
+
+        <br><br>
+
+        <label>Search by Owner:</label><br>
+        <input type="text" name="owner" value="{{ owner }}">
+
+        <br><br>
+
+        <label>Filter by Category:</label><br>
+        <select name="category">
+            <option value="">All Categories</option>
+            {% for value, label in categories %}
+                <option value="{{ value }}"
+                    {% if category == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+
+        <label>Filter by Upload Date:</label><br>
+        <input type="date" name="date" value="{{ upload_date }}">
+
+        <br><br>
+
+        <button type="submit">Search / Filter</button>
+
+        <a href="{% url 'shared_documents' %}">Clear Filters</a>
+
+    </form>
+
+    <hr>
+
+    {% for item in permissions %}
+
+        <h3>{{ item.document.title }}</h3>
+
+        <p>Owner: {{ item.document.owner.username }}</p>
+
+        <p>Category: {{ item.document.get_category_display }}</p>
+
+        <p>Permission: {{ item.permission|title }}</p>
+
+        <p>Uploaded: {{ item.document.uploaded_at }}</p>
+
+        <p>Shared on: {{ item.granted_at }}</p>
+
+        <!-- NEW: VIEW DOCUMENT LINK -->
+        <a href="{% url 'view_document' item.document.id %}">
+            View Document
+        </a>
+
+        <br><br>
+
+        <a href="{% url 'download_document' item.document.id %}">
+            Download Document
+        </a>
+
+        {% if item.permission == "edit" %}
+            <br><br>
+            <a href="{% url 'edit_document' item.document.id %}">
+                Edit Document
+            </a>
+        {% endif %}
+
+        <hr>
+
+    {% empty %}
+
+        <p>No documents found.</p>
+
+    {% endfor %}
+
+    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+
+</body>
+</html>

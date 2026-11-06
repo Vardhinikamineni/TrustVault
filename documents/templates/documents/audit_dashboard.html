@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TrustVault - Audit Dashboard</title>
+</head>
+<body>
+
+    <h1>TrustVault</h1>
+    <h2>Admin Audit Dashboard</h2>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>User</th>
+            <th>Document</th>
+            <th>Action</th>
+            <th>Outcome</th>
+            <th>Details</th>
+            <th>IP Address</th>
+            <th>Date and Time</th>
+        </tr>
+
+        {% for log in audit_logs %}
+        <tr>
+            <td>
+                {% if log.actor %}
+                    {{ log.actor.username }}
+                {% else %}
+                    Unknown
+                {% endif %}
+            </td>
+
+            <td>
+                {% if log.document %}
+                    {{ log.document.title }}
+                {% else %}
+                    Deleted / Not Found
+                {% endif %}
+            </td>
+
+            <td>{{ log.get_action_display }}</td>
+            <td>{{ log.get_outcome_display }}</td>
+            <td>{{ log.details }}</td>
+            <td>{{ log.ip_address|default:"Not available" }}</td>
+            <td>{{ log.timestamp }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">No audit records found.</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <br>
+    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+
+</body>
+</html>

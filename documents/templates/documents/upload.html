@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TrustVault - Upload Document</title>
+</head>
+<body>
+
+    <h1>TrustVault</h1>
+    <h2>Upload Document</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <label>Document Title:</label><br>
+        <input type="text" name="title" required>
+        <br><br>
+
+        <label>Document Category:</label><br>
+        <select name="category" required>
+            <option value="general">General</option>
+            <option value="education">Education</option>
+            <option value="finance">Finance</option>
+            <option value="legal">Legal</option>
+            <option value="personal">Personal</option>
+            <option value="business">Business</option>
+        </select>
+        <br><br>
+
+        <label>Select Document:</label><br>
+        <input type="file" name="file" required>
+        <br><br>
+
+        <button type="submit">Upload Document</button>
+    </form>
+
+    <br>
+    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+
+</body>
+</html>
