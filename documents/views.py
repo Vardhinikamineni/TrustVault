@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import FileResponse, Http404
 from django.utils.dateparse import parse_date
+from django.db.models import Q
 
 from .models import Document, DocumentPermission, AuditLog
 
@@ -589,17 +590,36 @@ def revoke_permission(request, permission_id):
     return redirect("share_document")
 
 
-# ADMIN - VIEW AUDIT LOGS
+# ADMIN AND OWNER - VIEW AUDIT LOGS
 @login_required
 def audit_dashboard(request):
-    if not request.user.is_superuser:
-        messages.error(request, "Only Admin can view audit logs.")
+
+    profile = getattr(request.user, "profile", None)
+
+    is_owner = (
+        profile is not None
+        and profile.role == "owner"
+    )
+
+    if not request.user.is_superuser and not is_owner:
+        messages.error(
+            request,
+            "You do not have permission to view audit logs."
+        )
         return redirect("dashboard")
 
-    audit_logs = AuditLog.objects.select_related(
+    if request.user.is_superuser:
+        audit_logs = AuditLog.objects.all()
+    else:
+        audit_logs = AuditLog.objects.filter(
+            Q(actor=request.user)
+            | Q(document__owner=request.user)
+        )
+
+    audit_logs = audit_logs.select_related(
         "actor",
         "document"
-    ).all()
+    ).order_by("-timestamp")
 
     return render(
         request,
