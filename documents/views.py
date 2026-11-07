@@ -1,4 +1,3 @@
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -193,10 +192,14 @@ def user_login(request):
 # DASHBOARD
 @login_required
 def dashboard(request):
-    role = request.user.profile.role
 
+    # Superuser must always be treated as Admin
     if request.user.is_superuser:
         role = "admin"
+
+    else:
+        profile = getattr(request.user, "profile", None)
+        role = profile.role if profile else "viewer"
 
     return render(
         request,

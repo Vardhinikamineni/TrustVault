@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,7 +18,7 @@
         <p>View all users and manage access permissions.</p>
 
         <a href="{% url 'audit_dashboard' %}">
-            View Audit Logs
+            View Audit Dashboard
         </a>
 
     {% elif role == "owner" %}
@@ -37,6 +36,11 @@
 
         <a href="{% url 'share_document' %}">
             Share Document
+        </a>
+        <br><br>
+
+        <a href="{% url 'audit_dashboard' %}">
+            View Audit Dashboard
         </a>
 
     {% elif role == "viewer" %}
