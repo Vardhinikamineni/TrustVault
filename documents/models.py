@@ -1,10 +1,9 @@
-
 from django.db import models
 from django.contrib.auth.models import User
-from django.conf import settings
-from django.core.files.storage import FileSystemStorage
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
+from .storage import PrivateDocumentStorage
 
 
 # USER PROFILE
@@ -38,12 +37,6 @@ def create_user_profile(sender, instance, created, **kwargs):
         Profile.objects.create(user=instance)
 
 
-# PRIVATE DOCUMENT STORAGE
-private_document_storage = FileSystemStorage(
-    location=settings.PRIVATE_MEDIA_ROOT
-)
-
-
 # DOCUMENT MODEL
 class Document(models.Model):
 
@@ -66,7 +59,7 @@ class Document(models.Model):
 
     file = models.FileField(
         upload_to='documents/',
-        storage=private_document_storage
+        storage=PrivateDocumentStorage()
     )
 
     owner = models.ForeignKey(
