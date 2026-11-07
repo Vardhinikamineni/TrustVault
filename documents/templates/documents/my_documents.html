@@ -25,18 +25,22 @@
         <label>Filter by Category:</label><br>
         <select name="category">
             <option value="">All Categories</option>
-            <option value="general">General</option>
-            <option value="education">Education</option>
-            <option value="finance">Finance</option>
-            <option value="legal">Legal</option>
-            <option value="personal">Personal</option>
-            <option value="business">Business</option>
+            {% for value, label in categories %}
+                <option value="{{ value }}"
+                    {% if category == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
         </select>
 
         <br><br>
 
         <label>Filter by Upload Date:</label><br>
-        <input type="date" name="date">
+        <input
+            type="date"
+            name="date"
+            value="{{ upload_date }}"
+        >
 
         <br><br>
 
@@ -57,6 +61,14 @@
             <p>Category: {{ document.get_category_display }}</p>
 
             <p>Uploaded: {{ document.uploaded_at }}</p>
+
+            <!-- VIEW DOCUMENT -->
+            <a href="{% url 'view_document' document.id %}"
+               target="_blank">
+                View Document
+            </a>
+
+            <br><br>
 
             <!-- DOWNLOAD -->
             <a href="{% url 'download_document' document.id %}">
